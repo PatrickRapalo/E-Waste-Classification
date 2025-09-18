@@ -9,21 +9,34 @@ Develop an AI-powered visual classification system capable of accurately identif
 # Model Architecture
 AlexNet Modified for E-Waste Classification
 
-Base Architecture: Modified AlexNet with 8 layers (5 convolutional + 3 fully connected)
+Base Architecture: 
+Modified AlexNet with 8 layers (5 convolutional + 3 fully connected)
+
 Input Size: 224x224x3 RGB images
+
 Output Classes: 5 categories of electronic waste
+
 Framework: PyTorch
+
 Total Parameters: ~60M parameters
 
 # Model Specifications
 Input Layer: 224x224x3
+
 Conv1: 64 filters, 11x11 kernel, stride 4
+
 Conv2: 192 filters, 5x5 kernel
+
 Conv3: 384 filters, 3x3 kernel
-Conv4: 256 filters, 3x3 kernel  
+
+Conv4: 256 filters, 3x3 kernel
+
 Conv5: 256 filters, 3x3 kernel
+
 FC1: 4096 neurons
+
 FC2: 4096 neurons
+
 Output: 5 classes (softmax)
 
 # Dataset categories
@@ -38,11 +51,17 @@ Other Electronics / Miscellaneous e-waste / Cables, chargers, small devices
 # Prerequisites
 
 Python >= 3.7
+
 PyTorch >= 1.9.0
+
 torchvision >= 0.10.0
+
 PIL (Pillow)
+
 matplotlib
+
 scikit-learn
+
 numpy
 
 # Data Organization
