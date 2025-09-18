@@ -16,14 +16,14 @@ class EWasteDataset(Dataset):
     data/
     ├── train/
     │   ├── smartphones/
-    │   ├── laptops/
-    │   ├── tablets/
+    │   ├── televisions/
+    │   ├── small-household/
     │   ├── circuit_boards/
     │   └── other_electronics/
     └── test/
         ├── smartphones/
-        ├── laptops/
-        ├── tablets/
+        ├── televisions/
+        ├── small-household/
         ├── circuit_boards/
         └── other_electronics/
     """
