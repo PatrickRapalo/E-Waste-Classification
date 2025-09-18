@@ -47,15 +47,28 @@ numpy
 
 # Data Organization
 data/
+
 ├── train/
+
 │   ├── smartphones/
+
 │   ├── laptops/
+
 │   ├── tablets/
+
 │   ├── circuit_boards/
+
 │   └── other_electronics/
+
 └── test/
+
     ├── smartphones/
+    
     ├── laptops/
+    
     ├── tablets/
+    
     ├── circuit_boards/
+    
     └── other_electronics/
+    
