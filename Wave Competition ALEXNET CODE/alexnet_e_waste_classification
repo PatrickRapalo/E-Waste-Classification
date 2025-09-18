@@ -346,8 +346,8 @@ if __name__ == "__main__":
     
     # Train the model (uncomment when you have data)
     classifier.train(
-       train_dir='C:/Users/patri/OneDrive/Desktop/WAVE Competiton/E-Waste-Classification/Wave Competition ALEXNET CODE/data/train',
-         test_dir='C:/Users/patri/OneDrive/Desktop/WAVE Competiton/E-Waste-Classification/Wave Competition ALEXNET CODE/data/test',
+       train_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/train',
+         test_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/test',
          epochs=20,
          batch_size=32
      )
