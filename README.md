@@ -43,9 +43,13 @@ Output: 5 classes (softmax)
 My model classifies e-waste into the following categories:
 
 Smartphones/ Mobile devices and accessories/ iPhones, Android phones, cases
+
 Laptops / Portable computers / Notebooks, ultrabooks, gaming laptops
+
 Tablets / Tablet computers / iPads, Android tablets, e-readers
+
 Circuit Boards / PCBs and electronic components / Motherboards, RAM, processors
+
 Other Electronics / Miscellaneous e-waste / Cables, chargers, small devices
 
 # Prerequisites
