@@ -50,25 +50,25 @@ data/
 
 ├── train/
 
-  ├── smartphones/
+    ├── smartphones/
 
-  ├── laptops/
+    ├── laptops/
 
-  ├── tablets/
+    ├── tablets/
 
-  ├── circuit_boards/
+    ├── circuit_boards/
 
-  └── other_electronics/
+    └── other_electronics/
 
 └── test/
 
-  ├── smartphones/
+    ├── smartphones/
     
-  ├── laptops/
+    ├── laptops/
     
-  ├── tablets/
+    ├── tablets/
     
-  ├── circuit_boards/
+    ├── circuit_boards/
     
-  └── other_electronics/
+    └── other_electronics/
     
