@@ -345,12 +345,12 @@ if __name__ == "__main__":
     classifier = EWasteClassifier(num_classes=5)  # Adjust based on your classes
     
     # Train the model (uncomment when you have data)
-    # classifier.train(
-    #     train_dir='data/train',
-    #     test_dir='data/test',
-    #     epochs=20,
-    #     batch_size=32
-    # )
+    classifier.train(
+       train_dir='C:/Users/patri/OneDrive/Desktop/WAVE Competiton/E-Waste-Classification/Wave Competition ALEXNET CODE/data/train',
+         test_dir='C:/Users/patri/OneDrive/Desktop/WAVE Competiton/E-Waste-Classification/Wave Competition ALEXNET CODE/data/test',
+         epochs=20,
+         batch_size=32
+     )
     
     # Load a pre-trained model (uncomment if you have a saved model)
     # classifier.load_model('best_ewaste_model.pth')
@@ -360,7 +360,7 @@ if __name__ == "__main__":
     # print(f"Predicted: {predicted_class} (Confidence: {confidence:.2f})")
     
     # Evaluate model (uncomment when you have test data)
-    # classifier.evaluate_model('data/test')
+    #classifier.evaluate_model('data/test')
     
     print("E-Waste AlexNet model ready for training!")
     print("\nTo use this model:")
