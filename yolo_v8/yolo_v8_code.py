@@ -95,7 +95,7 @@ def quick_train():
     """One-liner training function"""
 
     # Your data path
-    data_root = '/content/E-Waste-Classification/wave_competition_res_101_code/data'
+    data_root = '/content/E-Waste-Classification/yolo_v8/data
 
     # Check if repo exists
     if not os.path.exists('/content/E-Waste-Classification'):
