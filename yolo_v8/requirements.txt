@@ -1,0 +1,31 @@
+ultralytics>=8.0.0
+torch>=1.8.0
+torchvision>=0.9.0
+opencv-python>=4.5.0
+Pillow>=8.0.0
+numpy>=1.18.5
+matplotlib>=3.2.2
+PyYAML>=5.3.1
+requests>=2.23.0
+scipy>=1.4.1
+tqdm>=4.64.0
+pandas>=1.1.4
+seaborn>=0.11.0
+psutil>=5.7.0
+thop>=0.1.1
+
+# Additional YOLO v8 specific dependencies:
+tensorboard>=2.8.0  # For training visualization
+clearml>=1.6.0      # For experiment tracking (optional)
+comet-ml>=3.31.7    # For experiment tracking (optional)
+wandb>=0.12.10      # For experiment tracking (optional)
+
+# For CUDA support (uncomment for GPU training):
+# --index-url https://download.pytorch.org/whl/cu121
+# torch>=1.8.0
+# torchvision>=0.9.0
+
+# Development dependencies (optional):
+# pytest>=6.0.0
+# pytest-cov>=2.10.0
+# pre-commit>=2.15.0

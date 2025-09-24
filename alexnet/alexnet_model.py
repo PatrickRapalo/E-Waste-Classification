@@ -1,0 +1,370 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms, models
+from PIL import Image
+import os
+import numpy as np
+from sklearn.metrics import accuracy_score, classification_report
+import matplotlib.pyplot as plt
+
+class EWasteDataset(Dataset):
+    """
+    Custom dataset class for E-Waste images
+    Expected folder structure:
+    data/
+    ├── train/
+    │   ├── smartphones/
+    │   ├── televisions/
+    │   ├── small-household/
+    │   ├── circuit_boards/
+    │   └── other_electronics/
+    └── test/
+        ├── smartphones/
+        ├── televisions/
+        ├── small-household/
+        ├── circuit_boards/
+        └── other_electronics/
+    """
+    
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.transform = transform
+        self.classes = []
+        self.class_to_idx = {}
+        self.samples = []
+        
+        # Get class names from folder names
+        for class_name in sorted(os.listdir(root_dir)):
+            class_path = os.path.join(root_dir, class_name)
+            if os.path.isdir(class_path):
+                self.classes.append(class_name)
+        
+        # Create class to index mapping
+        self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
+        
+        # Load all image paths and labels
+        for class_name in self.classes:
+            class_path = os.path.join(root_dir, class_name)
+            class_idx = self.class_to_idx[class_name]
+            
+            for img_name in os.listdir(class_path):
+                if img_name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
+                    img_path = os.path.join(class_path, img_name)
+                    self.samples.append((img_path, class_idx))
+    
+    def __len__(self):
+        return len(self.samples)
+    
+    def __getitem__(self, idx):
+        img_path, label = self.samples[idx]
+        image = Image.open(img_path).convert('RGB')
+        
+        if self.transform:
+            image = self.transform(image)
+        
+        return image, label
+
+class AlexNetEWaste(nn.Module):
+    """
+    Modified AlexNet architecture for E-Waste classification
+    """
+    
+    def __init__(self, num_classes=5):
+        super(AlexNetEWaste, self).__init__()
+        
+        # Feature extraction layers (convolutional layers)
+        self.features = nn.Sequential(
+            # Conv1
+            nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            # Conv2
+            nn.Conv2d(64, 192, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            # Conv3
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            
+            # Conv4
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            
+            # Conv5
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+        )
+        
+        # Adaptive pooling to handle different input sizes
+        self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
+        
+        # Classification layers (fully connected layers)
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(256 * 6 * 6, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, num_classes),
+        )
+    
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+class EWasteClassifier:
+    """
+    Main class for training and using the E-Waste classification model
+    """
+    
+    def __init__(self, num_classes=5, device=None):
+        self.device = device or torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.num_classes = num_classes
+        self.model = AlexNetEWaste(num_classes=num_classes).to(self.device)
+        self.criterion = nn.CrossEntropyLoss()
+        self.optimizer = optim.Adam(self.model.parameters(), lr=0.001, weight_decay=1e-4)
+        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=10, gamma=0.1)
+        
+        # Data transformations
+        self.train_transform = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.RandomCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(10),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        
+        self.test_transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+    
+    def load_data(self, train_dir, test_dir, batch_size=32):
+        """Load training and testing datasets"""
+        
+        train_dataset = EWasteDataset(train_dir, transform=self.train_transform)
+        test_dataset = EWasteDataset(test_dir, transform=self.test_transform)
+        
+        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        
+        self.class_names = train_dataset.classes
+        print(f"Classes: {self.class_names}")
+        print(f"Training samples: {len(train_dataset)}")
+        print(f"Testing samples: {len(test_dataset)}")
+        
+        return train_dataset, test_dataset
+    
+    def train_epoch(self):
+        """Train the model for one epoch"""
+        self.model.train()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+        
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            data, target = data.to(self.device), target.to(self.device)
+            
+            self.optimizer.zero_grad()
+            outputs = self.model(data)
+            loss = self.criterion(outputs, target)
+            loss.backward()
+            self.optimizer.step()
+            
+            running_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += target.size(0)
+            correct += predicted.eq(target).sum().item()
+            
+            if batch_idx % 10 == 0:
+                print(f'Batch {batch_idx}/{len(self.train_loader)}, '
+                      f'Loss: {loss.item():.4f}, '
+                      f'Acc: {100.*correct/total:.2f}%')
+        
+        epoch_loss = running_loss / len(self.train_loader)
+        epoch_acc = 100. * correct / total
+        return epoch_loss, epoch_acc
+    
+    def validate(self):
+        """Validate the model"""
+        self.model.eval()
+        test_loss = 0
+        correct = 0
+        total = 0
+        all_preds = []
+        all_targets = []
+        
+        with torch.no_grad():
+            for data, target in self.test_loader:
+                data, target = data.to(self.device), target.to(self.device)
+                outputs = self.model(data)
+                test_loss += self.criterion(outputs, target).item()
+                
+                _, predicted = outputs.max(1)
+                total += target.size(0)
+                correct += predicted.eq(target).sum().item()
+                
+                all_preds.extend(predicted.cpu().numpy())
+                all_targets.extend(target.cpu().numpy())
+        
+        test_loss /= len(self.test_loader)
+        test_acc = 100. * correct / total
+        
+        return test_loss, test_acc, all_preds, all_targets
+    
+    def train(self, train_dir, test_dir, epochs=20, batch_size=32):
+        """Train the model"""
+        print(f"Training on device: {self.device}")
+        
+        # Load data
+        self.load_data(train_dir, test_dir, batch_size)
+        
+        train_losses = []
+        train_accs = []
+        val_losses = []
+        val_accs = []
+        
+        best_acc = 0
+        
+        for epoch in range(epochs):
+            print(f'\nEpoch {epoch+1}/{epochs}')
+            print('-' * 30)
+            
+            # Training
+            train_loss, train_acc = self.train_epoch()
+            train_losses.append(train_loss)
+            train_accs.append(train_acc)
+            
+            # Validation
+            val_loss, val_acc, _, _ = self.validate()
+            val_losses.append(val_loss)
+            val_accs.append(val_acc)
+            
+            print(f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%')
+            print(f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+            
+            # Save best model
+            if val_acc > best_acc:
+                best_acc = val_acc
+                torch.save(self.model.state_dict(), 'best_ewaste_model.pth')
+                print(f'New best model saved with accuracy: {best_acc:.2f}%')
+            
+            self.scheduler.step()
+        
+        # Plot training history
+        self.plot_training_history(train_losses, train_accs, val_losses, val_accs)
+        
+        return train_losses, train_accs, val_losses, val_accs
+    
+    def plot_training_history(self, train_losses, train_accs, val_losses, val_accs):
+        """Plot training and validation metrics"""
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+        
+        # Plot losses
+        ax1.plot(train_losses, label='Training Loss')
+        ax1.plot(val_losses, label='Validation Loss')
+        ax1.set_title('Model Loss')
+        ax1.set_xlabel('Epoch')
+        ax1.set_ylabel('Loss')
+        ax1.legend()
+        
+        # Plot accuracies
+        ax2.plot(train_accs, label='Training Accuracy')
+        ax2.plot(val_accs, label='Validation Accuracy')
+        ax2.set_title('Model Accuracy')
+        ax2.set_xlabel('Epoch')
+        ax2.set_ylabel('Accuracy (%)')
+        ax2.legend()
+        
+        plt.tight_layout()
+        plt.savefig('training_history.png')
+        plt.show()
+    
+    def predict_image(self, image_path):
+        """Predict the class of a single image"""
+        self.model.eval()
+        
+        # Load and preprocess image
+        image = Image.open(image_path).convert('RGB')
+        image_tensor = self.test_transform(image).unsqueeze(0).to(self.device)
+        
+        with torch.no_grad():
+            outputs = self.model(image_tensor)
+            probabilities = torch.nn.functional.softmax(outputs[0], dim=0)
+            _, predicted = torch.max(outputs, 1)
+        
+        predicted_class = self.class_names[predicted.item()]
+        confidence = probabilities[predicted].item()
+        
+        return predicted_class, confidence, probabilities
+    
+    def load_model(self, model_path):
+        """Load a saved model"""
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        print(f"Model loaded from {model_path}")
+    
+    def evaluate_model(self, test_dir):
+        """Evaluate model performance with detailed metrics"""
+        test_dataset = EWasteDataset(test_dir, transform=self.test_transform)
+        test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+        
+        self.model.eval()
+        all_preds = []
+        all_targets = []
+        
+        with torch.no_grad():
+            for data, target in test_loader:
+                data, target = data.to(self.device), target.to(self.device)
+                outputs = self.model(data)
+                _, predicted = outputs.max(1)
+                
+                all_preds.extend(predicted.cpu().numpy())
+                all_targets.extend(target.cpu().numpy())
+        
+        # Print classification report
+        print("\nClassification Report:")
+        print(classification_report(all_targets, all_preds, target_names=self.class_names))
+        
+        return all_preds, all_targets
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize the classifier
+    classifier = EWasteClassifier(num_classes=5)  # Adjust based on your classes
+    
+    # Train the model (uncomment when you have data)
+    classifier.train(
+       train_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/train',
+         test_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/test',
+         epochs=20,
+         batch_size=32
+     )
+    
+    # Load a pre-trained model (uncomment if you have a saved model)
+    # classifier.load_model('best_ewaste_model.pth')
+    
+    # Predict on a single image (uncomment when you have an image)
+    # predicted_class, confidence, probabilities = classifier.predict_image('path/to/your/image.jpg')
+    # print(f"Predicted: {predicted_class} (Confidence: {confidence:.2f})")
+    
+    # Evaluate model (uncomment when you have test data)
+    #classifier.evaluate_model('data/test')
+    
+    print("E-Waste AlexNet model ready for training!")
+    print("\nTo use this model:")
+    print("1. Organize your images in the folder structure shown in the EWasteDataset class")
+    print("2. Update the num_classes parameter to match your dataset")
+    print("3. Uncomment the training code and provide your data paths")
+    print("4. Run the script to train your model")
