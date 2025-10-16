@@ -35,11 +35,18 @@ class EWasteDataset(Dataset):
         self.class_to_idx = {}
         self.samples = []
         
+        # Check if directory exists
+        if not os.path.exists(root_dir):
+            raise ValueError(f"Directory does not exist: {root_dir}")
+        
         # Get class names from folder names
         for class_name in sorted(os.listdir(root_dir)):
             class_path = os.path.join(root_dir, class_name)
             if os.path.isdir(class_path):
                 self.classes.append(class_name)
+        
+        if len(self.classes) == 0:
+            raise ValueError(f"No class folders found in {root_dir}")
         
         # Create class to index mapping
         self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
@@ -49,10 +56,15 @@ class EWasteDataset(Dataset):
             class_path = os.path.join(root_dir, class_name)
             class_idx = self.class_to_idx[class_name]
             
-            for img_name in os.listdir(class_path):
-                if img_name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
-                    img_path = os.path.join(class_path, img_name)
-                    self.samples.append((img_path, class_idx))
+            image_files = [f for f in os.listdir(class_path) 
+                          if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]
+            
+            for img_name in image_files:
+                img_path = os.path.join(class_path, img_name)
+                self.samples.append((img_path, class_idx))
+        
+        if len(self.samples) == 0:
+            raise ValueError(f"No images found in {root_dir}. Please check your folder structure.")
     
     def __len__(self):
         return len(self.samples)
@@ -262,9 +274,42 @@ class EWasteClassifier:
                 print(f'New best model saved with accuracy: {best_acc:.2f}%')
             
             self.scheduler.step()
+            
+            # Update plots after each epoch
+            from IPython.display import clear_output
+            clear_output(wait=True)
+            
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+            
+            # Plot losses
+            ax1.plot(range(1, len(train_losses) + 1), train_losses, 'b-o', label='Training Loss', linewidth=2, markersize=6)
+            ax1.plot(range(1, len(val_losses) + 1), val_losses, 'r-o', label='Validation Loss', linewidth=2, markersize=6)
+            ax1.set_title('Model Loss', fontsize=14, fontweight='bold')
+            ax1.set_xlabel('Epoch', fontsize=12)
+            ax1.set_ylabel('Loss', fontsize=12)
+            ax1.legend(loc='upper right')
+            ax1.grid(True, alpha=0.3)
+            
+            # Plot accuracies
+            ax2.plot(range(1, len(train_accs) + 1), train_accs, 'b-o', label='Training Accuracy', linewidth=2, markersize=6)
+            ax2.plot(range(1, len(val_accs) + 1), val_accs, 'r-o', label='Validation Accuracy', linewidth=2, markersize=6)
+            ax2.set_title('Model Accuracy', fontsize=14, fontweight='bold')
+            ax2.set_xlabel('Epoch', fontsize=12)
+            ax2.set_ylabel('Accuracy (%)', fontsize=12)
+            ax2.legend(loc='lower right')
+            ax2.grid(True, alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig('training_history.png', dpi=300, bbox_inches='tight')
+            plt.show()
+            
+            print(f'\nCompleted Epoch {epoch+1}/{epochs}')
+            print(f'Current Best Validation Accuracy: {best_acc:.2f}%')
         
-        # Plot training history
-        self.plot_training_history(train_losses, train_accs, val_losses, val_accs)
+        print('\n' + '='*50)
+        print('Training Complete!')
+        print(f'Best Validation Accuracy: {best_acc:.2f}%')
+        print('='*50)
         
         return train_losses, train_accs, val_losses, val_accs
     
@@ -344,13 +389,13 @@ if __name__ == "__main__":
     # Initialize the classifier
     classifier = EWasteClassifier(num_classes=5)  # Adjust based on your classes
     
-    # Train the model (uncomment when you have data)
+    # Train the model - FIXED PATHS (removed extra comma)
     classifier.train(
-       train_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/train',
-         test_dir='C:/Users/patri/Desktop/Wave Competition/E-Waste-Classification/Wave Competition ALEXNET CODE/data/test',
-         epochs=20,
-         batch_size=32
-     )
+        train_dir='/content/E-Waste-Classification/alexnet/data/train',
+        test_dir='/content/E-Waste-Classification/alexnet/data/test',
+        epochs=20,
+        batch_size=32
+    )
     
     # Load a pre-trained model (uncomment if you have a saved model)
     # classifier.load_model('best_ewaste_model.pth')
@@ -360,11 +405,4 @@ if __name__ == "__main__":
     # print(f"Predicted: {predicted_class} (Confidence: {confidence:.2f})")
     
     # Evaluate model (uncomment when you have test data)
-    #classifier.evaluate_model('data/test')
-    
-    print("E-Waste AlexNet model ready for training!")
-    print("\nTo use this model:")
-    print("1. Organize your images in the folder structure shown in the EWasteDataset class")
-    print("2. Update the num_classes parameter to match your dataset")
-    print("3. Uncomment the training code and provide your data paths")
-    print("4. Run the script to train your model")
+    # classifier.evaluate_model('/content/E-Waste-Classification/alexnet/data/test')
