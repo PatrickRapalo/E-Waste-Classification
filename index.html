@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteIQ - AI-Powered E-Waste Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100px); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .overview-section {
+            background: #f8f9fa;
+        }
+
+        .overview-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .overview-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .overview-text p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .visual-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .circuit-pattern {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .device-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            backdrop-filter: blur(10px);
+            animation: pulse 3s infinite;
+        }
+
+        .device-icon:nth-child(2) { animation-delay: 0.5s; }
+        .device-icon:nth-child(3) { animation-delay: 1s; }
+        .device-icon:nth-child(4) { animation-delay: 1.5s; }
+        .device-icon:nth-child(5) { animation-delay: 2s; }
+        .device-icon:nth-child(6) { animation-delay: 2.5s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .problem-section {
+            background: white;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .problem-card {
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .problem-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .problem-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .solution-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .solution-section .section-title,
+        .solution-section .section-subtitle {
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .about-section {
+            background: #f8f9fa;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .contact-section {
+            background: white;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .contact-item a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: #667eea;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        @media (max-width: 968px) {
+            .overview-content,
+            .stats-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo">WasteIQ</h1>
+            <p class="tagline">AI-Powered E-Waste Classification</p>
+            <p class="subtitle">Transforming electronic waste management through intelligent automation and computer vision</p>
+            <a href="#overview" class="cta-button">Learn More</a>
+        </div>
+        <div class="scroll-indicator" onclick="document.getElementById('overview').scrollIntoView({behavior: 'smooth'})">
+            ↓
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="section overview-section">
+        <div class="overview-content">
+            <div class="overview-text">
+                <h3>WasteIQ is dramatically improving our ability to classify and manage electronic waste, <span class="highlight">affordably.</span></h3>
+                <p>The global e-waste crisis is growing exponentially, with 62 million tonnes generated in 2022 and projected to reach 82 million tonnes by 2030. Current sorting methods are slow, dangerous, and inefficient.</p>
+                <p>Led by a team of passionate students, WasteIQ is changing that. Our AI-powered solution leverages deep learning to provide real-time classification of electronic waste—all at an affordable cost. We're providing the tools required to unlock safer, more efficient recycling as the next frontier of sustainable technology.</p>
+            </div>
+            <div class="visual-placeholder">
+                <div class="circuit-pattern">
+                    <div class="device-icon">📱</div>
+                    <div class="device-icon">💻</div>
+                    <div class="device-icon">🖥️</div>
+                    <div class="device-icon">⌚</div>
+                    <div class="device-icon">🔋</div>
+                    <div class="device-icon">🎮</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">62M</div>
+                <div class="stat-label">Tonnes of E-Waste in 2022</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">22%</div>
+                <div class="stat-label">Properly Recycled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$62B</div>
+                <div class="stat-label">Value Lost Annually</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="section problem-section">
+        <h2 class="section-title">The E-Waste Challenge</h2>
+        <p class="section-subtitle">Critical Issues Facing Recycling Facilities Today</p>
+        
+        <div class="problem-grid">
+            <div class="problem-card">
+                <h4>Worker Safety</h4>
+                <p>Manual sorting exposes workers to toxic heavy metals including lead, mercury, and cadmium—creating serious health risks.</p>
+            </div>
+            <div class="problem-card">
+                <h4>Lost Value</h4>
+                <p>Inefficient sorting means billions in recoverable materials like gold, silver, and rare earth elements end up in landfills.</p>
+            </div>
+            <div class="problem-card">
+                <h4>Slow Processing</h4>
+                <p>Manual inspection processes only 5-10 items per minute, creating bottlenecks in recycling operations.</p>
+            </div>
+            <div class="problem-card">
+                <h4>Environmental Impact</h4>
+                <p>Improper e-waste management releases hazardous substances into soil and water, affecting ecosystems for generations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="section solution-section">
+        <h2 class="section-title">The WasteIQ Solution</h2>
+        <p class="section-subtitle">AlexNet-Powered Classification for Safer, Smarter Recycling</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h4>Real-Time Classification</h4>
+                <p>Instantly identifies e-waste categories using proven AlexNet deep learning architecture</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h4>Enhanced Safety</h4>
+                <p>Flags hazardous materials before workers touch them, reducing toxic exposure by 60%</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <h4>Value Recovery</h4>
+                <p>Identifies high-value materials for improved recovery rates and increased profitability</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h4>Cost-Effective</h4>
+                <p>Software-based solution costs 90% less than traditional robotic systems</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h4>Digital Tracking</h4>
+                <p>Automated compliance reporting and analytics for regulatory requirements</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h4>Scalable</h4>
+                <p>Works with existing conveyor systems and adapts to facilities of any size</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about-section">
+        <h2 class="section-title">About the Project</h2>
+        <p class="section-subtitle">A Student-Led Initiative for Environmental Innovation</p>
+        
+        <div class="about-content">
+            <p>WasteIQ was developed as part of a university startup competition with the goal of addressing one of the world's fastest-growing environmental challenges. As a student passionate about both technology and sustainability, I recognized the opportunity to apply cutting-edge AI to make a real-world impact.</p>
+            
+            <p>This project combines computer vision, deep learning, and environmental engineering to create a practical solution that recycling facilities can actually use. By leveraging the proven AlexNet architecture, WasteIQ offers an accessible, affordable approach to intelligent e-waste management.</p>
+            
+            <p>The vision is simple: transform how we handle electronic waste by making AI-powered classification available to facilities worldwide—improving both worker safety and environmental outcomes.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section contact-section">
+        <h2 class="section-title">Get in Touch</h2>
+        <p class="section-subtitle">Interested in learning more or collaborating?</p>
+        
+        <div class="contact-info">
+            <div class="contact-item">
+                <div class="contact-icon">📧</div>
+                <a href="mailto:team@wasteiq.com">team@wasteiq.com</a>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">🌐</div>
+                <a href="#demo">View Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 WasteIQ. A University Startup Competition Project.</p>
+        <p>Building intelligent solutions for sustainable e-waste management.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Animate stats on scroll
+        const statCards = document.querySelectorAll('.stat-card');
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        statCards.forEach(card => {
+            statObserver.observe(card);
+        });
+    </script>
+</body>
+</html>
