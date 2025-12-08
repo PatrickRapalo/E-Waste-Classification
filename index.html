@@ -243,6 +243,235 @@
             background: white;
         }
 
+        .technical-section {
+            background: white;
+            padding: 100px 20px;
+        }
+
+        .technical-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .tech-intro p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .architectures-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .architecture-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 40px;
+            border-top: 4px solid #667eea;
+        }
+
+        .arch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .arch-header h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .arch-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .arch-badge-alt {
+            background: #764ba2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .arch-specs {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .spec-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-item strong {
+            color: #2c3e50;
+        }
+
+        .arch-description h4 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .arch-description ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .arch-description li {
+            padding: 10px 0 10px 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .arch-description li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .methodology {
+            margin-bottom: 80px;
+        }
+
+        .methodology h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .methodology-steps {
+            display: grid;
+            gap: 30px;
+        }
+
+        .method-step {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            min-width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .technical-goals h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .outcomes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .outcome-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .outcome-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .outcome-icon {
+            margin-bottom: 20px;
+        }
+
+        .outcome-icon svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        .outcome-card h4 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .outcome-card p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 968px) {
+            .architectures-grid,
+            .outcomes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .method-step {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        .problem-section {
+            background: white;
+        }
+
         .problem-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -545,6 +774,136 @@
                 </div>
                 <h4>Scalable</h4>
                 <p>Works with existing conveyor systems and adapts to facilities of any size</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Approach Section -->
+    <section class="section technical-section">
+        <h2 class="section-title">Technical Approach</h2>
+        <p class="section-subtitle">Leveraging Proven Deep Learning Architectures</p>
+        
+        <div class="technical-content">
+            <div class="tech-intro">
+                <p>WasteIQ utilizes state-of-the-art convolutional neural networks (CNNs) to achieve accurate e-waste classification. Our approach leverages two proven architectures that balance performance with practical deployment requirements.</p>
+            </div>
+
+            <div class="architectures-grid">
+                <div class="architecture-card">
+                    <div class="arch-header">
+                        <h3>AlexNet</h3>
+                        <span class="arch-badge">Primary Model</span>
+                    </div>
+                    <div class="arch-specs">
+                        <div class="spec-item">
+                            <strong>Architecture:</strong> 8 learned layers (5 convolutional, 3 fully connected)
+                        </div>
+                        <div class="spec-item">
+                            <strong>Parameters:</strong> ~60 million
+                        </div>
+                        <div class="spec-item">
+                            <strong>Key Features:</strong> ReLU activation, dropout regularization, local response normalization
+                        </div>
+                    </div>
+                    <div class="arch-description">
+                        <h4>Why AlexNet?</h4>
+                        <ul>
+                            <li><strong>Proven Track Record:</strong> Revolutionized computer vision in 2012, winning ImageNet competition</li>
+                            <li><strong>Efficient Training:</strong> Simpler architecture means faster training on limited hardware</li>
+                            <li><strong>Practical Deployment:</strong> Can run on CPU without requiring expensive GPUs</li>
+                            <li><strong>Transfer Learning:</strong> Pre-trained weights allow fine-tuning for e-waste classification with smaller datasets</li>
+                            <li><strong>Student-Friendly:</strong> Well-documented with extensive educational resources</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-card">
+                    <div class="arch-header">
+                        <h3>ResNet</h3>
+                        <span class="arch-badge-alt">Comparison Model</span>
+                    </div>
+                    <div class="arch-specs">
+                        <div class="spec-item">
+                            <strong>Architecture:</strong> Deep residual learning with skip connections
+                        </div>
+                        <div class="spec-item">
+                            <strong>Variants:</strong> ResNet-18, ResNet-34, ResNet-50
+                        </div>
+                        <div class="spec-item">
+                            <strong>Key Innovation:</strong> Residual blocks enable training very deep networks
+                        </div>
+                    </div>
+                    <div class="arch-description">
+                        <h4>ResNet as Benchmark</h4>
+                        <ul>
+                            <li><strong>Higher Accuracy Potential:</strong> Deeper architecture may capture more complex patterns</li>
+                            <li><strong>Skip Connections:</strong> Helps mitigate vanishing gradient problem in deep networks</li>
+                            <li><strong>Performance Comparison:</strong> Used to evaluate if added complexity yields meaningful improvements</li>
+                            <li><strong>Trade-offs:</strong> Requires more computational resources and longer training time</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="methodology">
+                <h3>Our Methodology</h3>
+                <div class="methodology-steps">
+                    <div class="method-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Data Collection & Preparation</h4>
+                            <p>Gather diverse e-waste images across multiple categories (phones, laptops, batteries, circuit boards). Augment dataset with rotations, scaling, and lighting variations to improve model robustness.</p>
+                        </div>
+                    </div>
+                    <div class="method-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Transfer Learning</h4>
+                            <p>Start with pre-trained AlexNet weights from ImageNet. Fine-tune the network on our e-waste dataset, adapting the final classification layers to our specific categories.</p>
+                        </div>
+                    </div>
+                    <div class="method-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Training & Optimization</h4>
+                            <p>Train models using standard techniques: cross-entropy loss, SGD optimizer, learning rate scheduling. Monitor validation accuracy to prevent overfitting.</p>
+                        </div>
+                    </div>
+                    <div class="method-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Comparative Analysis</h4>
+                            <p>Benchmark AlexNet against ResNet variants to evaluate accuracy vs. computational efficiency trade-offs for real-world deployment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="technical-goals">
+                <h3>Expected Outcomes</h3>
+                <div class="outcomes-grid">
+                    <div class="outcome-card">
+                        <div class="outcome-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="#667eea"/></svg>
+                        </div>
+                        <h4>Target Accuracy</h4>
+                        <p>Achieve 90-95% classification accuracy on test dataset</p>
+                    </div>
+                    <div class="outcome-card">
+                        <div class="outcome-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#667eea"/></svg>
+                        </div>
+                        <h4>Real-Time Performance</h4>
+                        <p>Process images in under 1 second on standard hardware</p>
+                    </div>
+                    <div class="outcome-card">
+                        <div class="outcome-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="#667eea"/></svg>
+                        </div>
+                        <h4>Model Comparison</h4>
+                        <p>Quantify performance-efficiency trade-offs between architectures</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
