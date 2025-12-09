@@ -922,20 +922,6 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="section about-section">
-        <h2 class="section-title">About the Project</h2>
-        <p class="section-subtitle">A Student-Led Initiative for Environmental Innovation</p>
-        
-        <div class="about-content">
-            <p>WasteIQ was developed as part of a university startup competition with the goal of addressing one of the world's fastest-growing environmental challenges. As a student passionate about both technology and sustainability, I recognized the opportunity to apply cutting-edge AI to make a real-world impact.</p>
-            
-            <p>This project combines computer vision, deep learning, and environmental engineering to create a practical solution that recycling facilities can actually use. By leveraging the proven AlexNet architecture, WasteIQ offers an accessible, affordable approach to intelligent e-waste management.</p>
-            
-            <p>The vision is simple: transform how we handle electronic waste by making AI-powered classification available to facilities worldwide—improving both worker safety and environmental outcomes.</p>
-        </div>
-    </section>
-
     <!-- Contact Section -->
     <section class="section contact-section">
         <h2 class="section-title">See Our Research</h2>
@@ -986,3 +972,20 @@
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
